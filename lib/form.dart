@@ -13,18 +13,21 @@ class PersonReactiveForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _emailContols = useState(form.control('emails') as FormArray<String>);
+    final _emailControls = useState(form.control('emails') as FormArray<String>);
     final _person = useState(person);
 
-    // useEffect(() {
-    //   print('=============== Recreate form controls ==============');
-    //   _emailContols.value.clear();
-    //   _emailContols.value.addAll(
-    //     _person.value.emails!
-    //         .map((email) => FormControl<String>(value: email, validators: [Validators.email]))
-    //         .toList(),
-    //   );
-    // }, [_person, _emailContols]);
+    useEffect(() {
+      print('=============== Recreate form controls ==============');
+      _emailControls.value.clear();
+      _emailControls.value.addAll(
+        _person.value.emails!
+            .map((email) => FormControl<String>(value: email, validators: [Validators.email]))
+            .toList(),
+      );
+    }, [
+      //_person, _emailControls,
+      _person.value.emails.toString(), _emailControls.value.value!.toString()
+    ]);
 
     return ReactiveForm(
       formGroup: form,
@@ -43,7 +46,7 @@ class PersonReactiveForm extends HookWidget {
                   builder: (context, formArray, child) => Column(
                     children: [
                       for (int i = 0; i < _person.value.emails!.length; i++)
-                        arrayElementEmailTextField(i, _person, _emailContols),
+                        arrayElementEmailTextField(i, _person, _emailControls),
                     ],
                   ),
                 ),
@@ -53,8 +56,8 @@ class PersonReactiveForm extends HookWidget {
                       // enable 'Add Email' button only if no email field is empty or
                       // all fields have valid email values
                       onPressed: _person.value.emails!.any((email) => email.isNotEmpty) &&
-                              _emailContols.value.controls.every((control) => control.valid)
-                          ? () => _addEmail(_person, _emailContols)
+                              _emailControls.value.controls.every((control) => control.valid)
+                          ? () => _addEmail(_person, _emailControls)
                           : null,
                       child: const Text('Add Email'),
                     );
@@ -77,7 +80,7 @@ class PersonReactiveForm extends HookWidget {
   }
 
   Widget arrayElementEmailTextField(
-      int index, ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailContols) {
+      int index, ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailControls) {
     // print('index: $index, Add email control: ${_person.value.emails![index]}');
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -95,26 +98,26 @@ class PersonReactiveForm extends HookWidget {
         if (_person.value.emails!.length > 1)
           IconButton(
             icon: const Icon(Icons.remove_circle),
-            onPressed: () => _removeEmail(index, _person, _emailContols),
+            onPressed: () => _removeEmail(index, _person, _emailControls),
           )
       ],
     );
   }
 
-  void _addEmail(ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailContols) {
+  void _addEmail(ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailControls) {
     // print('----- adding email control -----');
     // print('Email Values before add: ${_person.value.emails!}');
     _person.value.emails!.add('');
-    _emailContols.value.add(FormControl<String>(value: '', validators: [Validators.email]));
+    _emailControls.value.add(FormControl<String>(value: '', validators: [Validators.email]));
     // print('Email Values after add: ${_person.value.emails!}');
   }
 
   void _removeEmail(
-      int index, ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailContols) {
+      int index, ValueNotifier<Person> _person, ValueNotifier<FormArray<String>> _emailControls) {
     // print('===== removing control at: $index =====');
     // print('Old values: ${_person.value.emails!}');
     _person.value.emails!.removeAt(index);
-    _emailContols.value.removeAt(index);
+    _emailControls.value.removeAt(index);
     // print('New values: ${_person.value.emails!}');
   }
 
@@ -129,7 +132,7 @@ class PersonReactiveForm extends HookWidget {
   //       // decoration: const InputDecoration(labelText: ''),
   //       keyboardType: TextInputType.emailAddress,
   //     ),
-  //     onRemovePressed: () => _person!._emailContols!.remove(email),
+  //     onRemovePressed: () => _person!._emailControls!.remove(email),
   //   );
   // }
 

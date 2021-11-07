@@ -36,7 +36,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Person person = Person(
     name: 'First Last',
-    emails: ['first@email.com', 'last@email.com', 'first.last@@email.com'],
+    emails: ['email1@email.com', 'email2@email.com', 'email3@email.com'],
   );
 
   // @override
