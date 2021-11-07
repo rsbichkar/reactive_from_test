@@ -16,18 +16,18 @@ class PersonReactiveForm extends HookWidget {
     final _emailControls = useState(form.control('emails') as FormArray<String>);
     final _person = useState(person);
 
-    useEffect(() {
-      print('=============== Recreate form controls ==============');
-      _emailControls.value.clear();
-      _emailControls.value.addAll(
-        _person.value.emails!
-            .map((email) => FormControl<String>(value: email, validators: [Validators.email]))
-            .toList(),
-      );
-    }, [
-      //_person, _emailControls,
-      _person.value.emails.toString(), _emailControls.value.value!.toString()
-    ]);
+    // useEffect(() {
+    //   print('=============== Recreate form controls ==============');
+    //   _emailControls.value.clear();
+    //   _emailControls.value.addAll(
+    //     _person.value.emails!
+    //         .map((email) => FormControl<String>(value: email, validators: [Validators.email]))
+    //         .toList(),
+    //   );
+    // }, [
+    //   //_person, _emailControls,
+    //   _person.value.emails!.length, _emailControls.value.value!.toString()
+    // ]);
 
     return ReactiveForm(
       formGroup: form,
